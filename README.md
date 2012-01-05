@@ -18,56 +18,56 @@ Then `require 'awesome_mailer'` and follow the example below.
 
 Suppose you have the following mailer:
 
- 	class UserMailer < ActionMailer::Base
-		def signup(user_id)
-			@user = User.find(user_id)
-			mail(:to => @user.email, :from => "no-reply@example.com")
-		end
+	class UserMailer < ActionMailer::Base
+	  def signup(user_id)
+	    @user = User.find(user_id)
+	    mail(:to => @user.email, :from => "no-reply@example.com")
+	  end
 	end
 
 ... and you have a template `app/views/user_mailer/signup.html.erb`. It might look something like this:
 
 	<html>
-		<%= stylesheet_link_tag 'email' %>
-		<body>
-			<div id="header"><%= link_to raw(image_tag('logo.png')), root_url %></div>
-			<div id="content">
-				<p>Welcome to AwesomeMailer, <%= @user.name %>! We think you might be neat.</p>
-			</div>
-			<div id="footer">
-				Copyright &copy 2012 <a href="http://www.delightfulwidgets.com">Delightful Widgets</a>
-			</div>
-		</body>
+	  <%= stylesheet_link_tag 'email' %>
+	  <body>
+	    <div id="header"><%= link_to raw(image_tag('logo.png')), root_url %></div>
+	    <div id="content">
+	      <p>Welcome to AwesomeMailer, <%= @user.name %>! We think you might be neat.</p>
+	    </div>
+	    <div id="footer">
+	      Copyright &copy 2012 <a href="http://www.delightfulwidgets.com">Delightful Widgets</a>
+	    </div>
+	  </body>
 	</html>
 
 ... and your spreadsheet (email.css) might be kinda like this:
 
 	body {
-		background: #f0f0f0;
-		font: 12pt Arial normal;
+	  background: #f0f0f0;
+	  font: 12pt Arial normal;
 	}
 
 	a img {
-		border-width: 0;
+	  border-width: 0;
 	}
-	
+
 	#header {
-		border-bottom: 1px solid black;
-		margin-bottom: 1em;
+	  border-bottom: 1px solid black;
+	  margin-bottom: 1em;
 	}
-	
+
 	#content {
-		font-family: Helvetica;
-		padding: 1em 0;
+	  font-family: Helvetica;
+	  padding: 1em 0;
 	}
-	
+
 	#content p {
-		line-height: 1.3em;
+	  line-height: 1.3em;
 	}
-	
+
 	#footer {
-		border-top: 1px dotted orange;
-		font-size: 10pt;
+	  border-top: 1px dotted orange;
+	  font-size: 10pt;
 	}
 
 ... you might be unhappy because most mail viewers couldn't care less that you included a stylesheet. But wait!
@@ -78,19 +78,19 @@ There's ActionMailer! Just change your mailer to look like this:
 ... and voila! Now your templates will render like this:
 
 	<html>
-		<body style="background: #f0f0f0; font: 12pt Arial normal;">
-			<div id="header" style="border-bottom: 1px solid black; margin-bottom: 1em;">
-				<a href="http://www.delightfulwidgets.com/">
-					<img src="http://www.delightfulwidgets.com/assets/logo.png" style="border-width: 0;" />
-				</a>
-			</div>
-			<div id="content" style="font-family: Helvetica; padding: 1em 0;">
-				<p style="line-height: 1.3em;">Welcome to AwesomeMailer, <%= @user.name %>! We think you might be neat.</p>
-			</div>
-			<div id="footer" style="border-top: 1px dotted orange; font-size: 10pt;">
-				Copyright &copy 2012 <a href="http://www.delightfulwidgets.com">Delightful Widgets</a>
-			</div>
-		</body>
+	  <body style="background: #f0f0f0; font: 12pt Arial normal;">
+	    <div id="header" style="border-bottom: 1px solid black; margin-bottom: 1em;">
+	      <a href="http://www.delightfulwidgets.com/">
+	        <img src="http://www.delightfulwidgets.com/assets/logo.png" style="border-width: 0;" />
+	      </a>
+	    </div>
+	    <div id="content" style="font-family: Helvetica; padding: 1em 0;">
+	      <p style="line-height: 1.3em;">Welcome to AwesomeMailer, <%= @user.name %>! We think you might be neat.</p>
+	    </div>
+	    <div id="footer" style="border-top: 1px dotted orange; font-size: 10pt;">
+	      Copyright &copy 2012 <a href="http://www.delightfulwidgets.com">Delightful Widgets</a>
+	    </div>
+	  </body>
 	</html>
 
 WOW!
