@@ -40,7 +40,7 @@ Suppose you have the following mailer:
 	  </body>
 	</html>
 
-... and your spreadsheet (email.css) might be kinda like this:
+... and your style sheet (email.css) might be kinda like this:
 
 	body {
 	  background: #f0f0f0;
@@ -71,7 +71,7 @@ Suppose you have the following mailer:
 	}
 
 ... you might be unhappy because most mail viewers couldn't care less that you included a stylesheet. But wait!
-There's ActionMailer! Just change your mailer to look like this:
+There's AwesomeMailer! Just change your mailer to look like this:
 
 	class UserMailer < AwesomeMailer::Base
 
