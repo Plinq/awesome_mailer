@@ -1,10 +1,8 @@
-AwesomeMailer
-=
+# AwesomeMailer
 
 AwesomeMailer is an ActionMailer extension that supports rad stuff like inline CSS embedded through `stylesheet_link_tag` or just, you know, stylesheets.
 
-Installation
-==
+## Installation
 
 Add this to your Gemfile:
 
@@ -16,8 +14,7 @@ Or if you're old-fashioned, do this:
 
 Then `require 'awesome_mailer'` and follow the example below.
 
-Example
-==
+## Example
 
 Suppose you have the following mailer:
 
@@ -98,28 +95,31 @@ There's ActionMailer! Just change your mailer to look like this:
 
 WOW!
 
-Additional Features
-==
+## Additional Features
 
-@import
-===
+### @import
+
 AwesomeMailer (or really, the library it relies on, CSS parser) is smart enough to load up stylesheets through
 @import statements. So go ahead and add `@import url('global.css')` to email.css, and we'll handle the rest.
 
-Pseudo-classes
-===
+### Pseudo-classes
+
 AwesomeMailer supports more than just inline styles. If you define pseudo-classes like :hover, :after, etc, it'll
 make sure they get included in a &lt;style&gt; tag in the &lt;head&gt; of your e-mail. Don&#x27;t have a &lt;head&gt;? That&#x27;s cool;
 AwesomeMailer will add one.
 
-@font-face
-===
+### @font-face
+
 AwesomeMailer will also load up font-face declarations, if'n you have 'em. That means you can add custom fonts to
 your e-mails the same way you do with your websites, and if your user's mail client supports them, UP they'll go!
 
-Bugs
-==
+## Bugs
 File bugs using the issues tab in Github. **Don't** e-mail me. _Please_.
 
-Copyright (C) 2011 Delightful Widgets Inc
-Built by Flip Sasser
+## LEGAL FUNSIES
+
+AwesomeMailer is copyright (c) 2011 Delightful Widgets Inc.
+
+It was built by Flip Sasser (flip@x451.com) using libraries from Alex Dunae
+([https://github.com/alexdunae/css_parser](https://github.com/alexdunae/css_parser)) and, as far as I know, Nick Sieger
+([https://github.com/hpricot/hpricot](https://github.com/hpricot/hpricot)). Those guys are AWESOME. Be their friends.
