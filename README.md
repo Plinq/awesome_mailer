@@ -6,11 +6,11 @@ AwesomeMailer is an ActionMailer extension that supports rad stuff like inline C
 
 Add this to your Gemfile:
 
-	gem 'awesome_mailer'
+	gem 'awesomemailer'
 
 Or if you're old-fashioned, do this:
 
-	gem install awesome_mailer
+	gem install awesomemailer
 
 Then `require 'awesome_mailer'` and follow the example below.
 
