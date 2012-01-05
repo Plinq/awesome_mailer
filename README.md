@@ -109,7 +109,7 @@ AwesomeMailer (or really, the library it relies on, CSS parser) is smart enough 
 Pseudo-classes
 ===
 AwesomeMailer supports more than just inline styles. If you define pseudo-classes like :hover, :after, etc, it'll
-make sure they get included in a <style> tag in the <head> of your e-mail. Don't have a <head>? That's cool;
+make sure they get included in a &lt;style&gt; tag in the &lt;head&gt; of your e-mail. Don&#x27;t have a &lt;head&gt;? That&#x27;s cool;
 AwesomeMailer will add one.
 
 @font-face
