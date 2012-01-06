@@ -48,8 +48,8 @@ module AwesomeMailer
             new_url_command = url_command.gsub(item, item_url.to_s)
             declarations[url_command] = new_url_command
           end
-        else
-          declarations.reject {|item| item.match(/url\s*\(/) }
+        # else
+        #   declarations.reject {|item| item.match(/url\s*\(/) }
         end
         if selector =~ /(^@)/
           append_styles!(document, selector, declarations.to_s) if url

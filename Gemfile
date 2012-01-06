@@ -5,4 +5,5 @@ gem 'hpricot', '>= 0.8'
 
 group :test do
   gem 'actionmailer', '>= 3.0'
+  gem 'jeweler'
 end

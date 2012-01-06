@@ -1,3 +1,7 @@
+0.0.2
+  * Fixed a bug left over from when declarations were split into an
+    array
+
 0.0.1
   * Hey look, is that ActionMailer::Base? No? Who is that? HOLY CRAP!
 		It's AwesomeMailer::Base!

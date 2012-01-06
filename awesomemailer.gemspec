@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "awesomemailer"
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Flip Sasser"]
-  s.date = "2012-01-05"
+  s.date = "2012-01-06"
   s.description = "\n      AwesomeMailer embeds your e-mail CSS inline, allowing you to write e-mail templates without worrying too much about stylesheets\n    "
   s.email = "flip@x451.com"
   s.extra_rdoc_files = [
@@ -23,8 +23,10 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "autotest/discover.rb",
+    "awesomemailer.gemspec",
     "lib/awesome_mailer.rb",
     "lib/awesome_mailer/base.rb",
+    "lib/awesomemailer.rb",
     "spec/lib/awesome_mailer_spec.rb",
     "spec/spec.opts",
     "spec/spec_helper.rb",
