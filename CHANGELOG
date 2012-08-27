@@ -1,3 +1,6 @@
+0.0.3
+  * Added Sprockets-based loading for local files. Now your mailers
+    work with local assets written with something other than CSS!
 0.0.2
   * Fixed a bug left over from when declarations were split into an
     array

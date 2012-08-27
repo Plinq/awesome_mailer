@@ -6,6 +6,8 @@ require 'css_parser'
 module AwesomeMailer
   class Base < ActionMailer::Base
     abstract!
+    include ActionView::Helpers::AssetTagHelper::StylesheetTagHelpers
+    include ActionView::Helpers::AssetTagHelper::JavascriptTagHelpers
 
     def render(*arguments)
       html_string = super
@@ -42,14 +44,12 @@ module AwesomeMailer
           path_url = Addressable::URI.parse(url)
           path_url.path = File.dirname(path_url.path)
           declarations.scan(/(url\(?["']+(.[^'"]*)["']\))/i).each do |url_command, item|
-            next if item =~ /^http(s){0,1}:\/\//
+            next if item =~ /^(http(s){0,1}:\/\/|\/)/
             item_url = path_url.dup
             item_url.path = File.join(item_url.path, item)
             new_url_command = url_command.gsub(item, item_url.to_s)
             declarations[url_command] = new_url_command
           end
-        # else
-        #   declarations.reject {|item| item.match(/url\s*\(/) }
         end
         if selector =~ /(^@)/
           append_styles!(document, selector, declarations.to_s) if url
@@ -64,18 +64,35 @@ module AwesomeMailer
     def apply_stylesheet!(document, stylesheet)
       css_parser = CssParser::Parser.new
       clean_href = stylesheet['href'].split('?').shift
+      if self.class.default_url_options[:host]
+        clean_href.gsub!(/^http:\/\/#{self.class.default_url_options[:host]}/, '')
+      end
       url = nil
-      case stylesheet['href']
+      case clean_href
       when /^\/assets/
-        dirname = File.dirname(clean_href).split('/').reject(&:blank?)[1..-1]
-        css_parser.load_file!(File.join(Rails.root, 'app', 'assets', 'stylesheets', dirname, File.basename(clean_href)))
+        if asset = Rails.application.assets[clean_href.gsub(/^\/assets\//, '')]
+          css_parser.add_block!(asset.to_s, :media_types => :all)
+        else
+          dirname = File.dirname(clean_href).split('/').reject(&:blank?)[1..-1]
+          local_file = File.join(Rails.root, 'app', 'assets', 'stylesheets', dirname, File.basename(clean_href))
+          if File.file?(local_file)
+            css_parser.load_file!(local_file)
+          end
+        end
       when /^\//
         css_parser.load_file!(File.join(Rails.root, 'public', clean_href))
+      when /^#{self.class.default_url_options[:host]}\/assets/
+        raise 'wugh oh'
       else
+        raise stylesheet.inspect
         css_parser.load_uri!(stylesheet['href'])
         url = clean_href
-      end      
+      end
       apply_rules!(document, css_parser, url)
+    end
+
+    def sprockets?
+      Rails.application.respond_to?(:assets)
     end
   end
 end

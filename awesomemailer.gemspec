@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "awesomemailer"
-  s.version = "0.0.2"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Flip Sasser"]
-  s.date = "2012-01-06"
+  s.date = "2012-08-27"
   s.description = "\n      AwesomeMailer embeds your e-mail CSS inline, allowing you to write e-mail templates without worrying too much about stylesheets\n    "
   s.email = "flip@x451.com"
   s.extra_rdoc_files = [
@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "VERSION",
-    "autotest/discover.rb",
     "awesomemailer.gemspec",
     "lib/awesome_mailer.rb",
     "lib/awesome_mailer/base.rb",
@@ -35,7 +34,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://github.com/Plinq/awesome_mailer"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
+  s.rubygems_version = "1.8.24"
   s.summary = "An ActionMailer extension that embeds CSS inline in e-mails"
 
   if s.respond_to? :specification_version then
