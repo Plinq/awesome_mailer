@@ -5,7 +5,7 @@ require 'awesome_mailer'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-Rails = OpenStruct.new(root: Pathname.new(Dir.pwd))
+Rails = OpenStruct.new(root: Pathname.new(File.dirname(__FILE__)))
 
 AwesomeMailer::Base.prepend_view_path 'spec/views'
 AwesomeMailer::Base.config.assets_dir = 'spec/assets'
@@ -29,8 +29,8 @@ module AwesomeMailerTestHelper
   def load_asset_pipeline
     asset_pipeline = {"test.css" => File.read(File.join('spec', 'assets', 'stylesheets', 'test.css'))}
     assets = {path: '/stylesheets'}
-    Rails.application = OpenStruct.new(assets: asset_pipeline)
-    Rails.configuration = OpenStruct.new(assets: assets)
+    Rails.stub(:application) { OpenStruct.new(assets: asset_pipeline) }
+    Rails.stub(:configuration) { OpenStruct.new(assets: assets) }
   end
 
   def wrap_in_html(string, head = true)

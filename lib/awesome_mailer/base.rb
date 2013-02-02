@@ -81,7 +81,8 @@ module AwesomeMailer
           css_parser.add_block!(asset.to_s, :media_types => :all)
         end
       when /^\//
-        css_parser.load_file!(Rails.root.join('public', stylesheet_path)) if rails?
+        local_path = rails? && Rails.root.join('public', stylesheet_path.gsub(/^\//, '')).to_s
+        css_parser.load_file!(local_path) if local_path && File.file?(local_path)
       else
         css_parser.load_uri!(stylesheet['href'])
       end
@@ -98,11 +99,9 @@ module AwesomeMailer
     end
 
     def rewrite_relative_urls(css_declarations)
-      path_url = css_host.dup
-      path_url.path = File.dirname(path_url.path)
-      css_declarations.scan(/(url\(?["']+(.[^'"]*)["']\))/i).each do |url_command, item|
-        next if item =~ /^(http(s){0,1}:\/\/|\/)/
-        item_url = path_url.dup
+      css_declarations.scan(/(url\s*\(?["']+(.[^'"]*)["']\))/i).each do |url_command, item|
+        next if item =~ /^http(s){0,1}:\/\//
+        item_url = css_host.dup
         item_url.path = File.join(item_url.path, item)
         new_url_command = url_command.gsub(item, item_url.to_s)
         css_declarations[url_command] = new_url_command
