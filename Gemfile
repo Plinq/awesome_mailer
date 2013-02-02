@@ -1,9 +1,13 @@
 source 'http://rubygems.org'
 
-gem 'css_parser', '>= 1.2.5'#, :git => 'https://github.com/alexdunae/css_parser.git'
-gem 'hpricot', '>= 0.8'
+gem 'actionmailer', '>= 3.2'
+gem 'addressable'
+gem 'css_parser', '>= 1.2.5'
+gem 'nokogiri', '>= 1.5.6'
 
 group :test do
-  gem 'actionmailer', '>= 3.0'
-  gem 'jeweler'
+  gem 'guard-rspec', require: false
+  gem 'jeweler', require: false
+  gem 'rspec', require: false
+  gem 'simplecov', require: false
 end

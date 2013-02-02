@@ -1,41 +1,47 @@
 require 'spec_helper'
-require 'awesome_mailer'
-
-AwesomeMailer::Base.prepend_view_path 'spec/support'
-AwesomeMailer::Base.config.assets_dir = 'spec/support'
-
-class TestMailer < AwesomeMailer::Base
-  def test_email(subject = "Hello!")
-    mail(
-      :from => "flip@x451.com",
-      :to => "flip@x451.com",
-      :subject => subject
-    )
-  end
-
-  def test_multipart_email(subject = "Hello")
-     mail(
-       :from => "flip@x451.com",
-       :to => "flip@x451.com",
-       :subject => subject
-     ) do |format|
-      format.html { render :test_email }
-      format.text { render :test_email }
-    end
-  end
-end
 
 describe AwesomeMailer::Base do
-  it "should render messages like ActionMailer::Base" do
-    TestMailer.test_email("Howdy!").should be_instance_of Mail::Message
+  it "renders messages like ActionMailer::Base" do
+    TestMailer.render_template(:basic).should be_instance_of Mail::Message
   end
 
-  it "should automatically parse the body of HTML e-mails" do
-    raise TestMailer.test_email("Howdy!").html_part.body.inspect
+  it "converts bad HTML to good HTML" do
+    email = TestMailer.render_template(:no_doctype)
+    email.body.to_s.should == wrap_in_html("<p>I have no doctype</p>", false)
   end
 
-  it "should automatically parse the body of multipart e-mails" do
-    raise TestMailer.test_multipart_email("Howdy!").html_part.body.inspect
+  describe "when the asset pipeline is enabled" do
+    before do
+      load_asset_pipeline
+    end
+
+    it "automatically parses the body of HTML e-mails" do
+      email = TestMailer.render_template(:asset_pipeline)
+      email.body.to_s.should == wrap_in_html('<div style="border: 1px solid #f00;">welcome!</div>')
+    end
+
+    it "automatically parses the body of multipart e-mails" do
+      email = TestMailer.render_multipart_template(:asset_pipeline)
+      email.html_part.body.to_s.should == wrap_in_html('<div style="border: 1px solid #f00;">welcome!</div>')
+      email.text_part.body.to_s.should == "welcome!\n"
+    end
+  end
+
+  describe "url rewriting" do
+    before do
+      AwesomeMailer::Base.default_url_options[:host] = "foo.bar"
+    end
+
+    it "rewrites URLS in a stylesheet to the default_url_options[:host]" do
+      email = TestMailer.render_template(:url_rewriting)
+    end
+  end
+
+  describe "pseudo-states" do
+
+  end
+
+  describe "@import and @font-face styles" do
+
   end
 end
-
