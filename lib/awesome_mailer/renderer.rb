@@ -78,7 +78,8 @@ module AwesomeMailer
         local_path = rails? && Rails.root.join('public', stylesheet_path.gsub(/^\//, '')).to_s
         css_parser.load_file!(local_path) if local_path && File.file?(local_path)
       else
-        css_parser.load_uri!(stylesheet['href'])
+        dirname = File.dirname(stylesheet['href'])
+        css_parser.load_uri!(stylesheet['href'], base_uri: dirname)
       end
       stylesheet.remove
     end

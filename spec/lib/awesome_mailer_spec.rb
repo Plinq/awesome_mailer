@@ -37,6 +37,18 @@ describe AwesomeMailer::Base do
     end
   end
 
+  describe "loading remote stylesheets" do
+    before do
+
+    end
+
+    it "loads the stylesheet from a URL" do
+      email = TestMailer.render_template(:remote_stylesheet).body.to_s
+      current_path = File.expand_path('../public', File.dirname(__FILE__))
+      email.should == wrap_in_html(%{<div style='background-image: url("#{current_path}/images/baz.jpg");'>welcome!</div>})
+    end
+  end
+
   describe "pseudo-states" do
     it "adds a style tag to the document head" do
       email = TestMailer.render_template(:pseudo_with_head).body.to_s
