@@ -33,12 +33,12 @@ module AwesomeMailerTestHelper
     Rails.stub(:configuration) { OpenStruct.new(assets: assets) }
   end
 
-  def wrap_in_html(string, head = true)
+  def wrap_in_html(string, head = "")
     html = [%{<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">}]
     body = "<body>#{string}</body>"
     if head
       html.push "<html>"
-      html.push "<head></head>"
+      html.push "<head>#{head}</head>"
       html.push body
       html.push "</html>"
     else

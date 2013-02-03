@@ -5,8 +5,7 @@ describe AwesomeMailer::Base do
     TestMailer.render_template(:basic).should be_instance_of Mail::Message
   end
 
-  it "converts bad HTML to good HTML" do
-    email = TestMailer.render_template(:no_doctype).body.to_s
+  it "converts bad HTML to good HTML" do email = TestMailer.render_template(:no_doctype).body.to_s
     email.should == wrap_in_html("<p>I have no doctype</p>", false)
   end
 
@@ -29,7 +28,7 @@ describe AwesomeMailer::Base do
 
   describe "url rewriting" do
     before do
-      AwesomeMailer::Base.default_url_options[:host] = "foo.bar"
+      AwesomeMailer::Base.stub(:default_url_options) { {host: "foo.bar"} }
     end
 
     it "rewrites URLS in a stylesheet to the default_url_options[:host]" do
@@ -39,10 +38,38 @@ describe AwesomeMailer::Base do
   end
 
   describe "pseudo-states" do
+    it "adds a style tag to the document head" do
+      email = TestMailer.render_template(:pseudo_with_head).body.to_s
+      email.should == wrap_in_html(
+        %{<p>I have a hover state in &lt;head&gt;</p>},
+        %{<style type="text/css">\np:hover { background-color: #f00; }\n</style>}
+      )
+    end
 
+    it "adds a head tag to the document fragment" do
+      email = TestMailer.render_template(:pseudo_without_head).body.to_s
+      email.should == wrap_in_html(
+        %{<p>I have a hover state in &lt;head&gt;</p>},
+        %{<style type="text/css">\np:hover { background-color: #f00; }\n</style>}
+      )
+    end
   end
 
   describe "@import and @font-face styles" do
+    it "adds a style tag to the document head" do
+      email = TestMailer.render_template(:font_face_with_head).body.to_s
+      email.should == wrap_in_html(
+        %{<p class="chunkfive" style="font-family: 'ChunkFive';">I have a custom font</p>},
+        %{<style type="text/css">\n@font-face { font-family: 'ChunkFive'; src: url('../chunkfive.eot'); }\n</style>}
+      )
+    end
 
+    it "adds a head tag to the document fragment" do
+      email = TestMailer.render_template(:font_face_without_head).body.to_s
+      email.should == wrap_in_html(
+        %{<p class="chunkfive" style="font-family: 'ChunkFive';">I have a custom font</p>},
+        %{<style type="text/css">\n@font-face { font-family: 'ChunkFive'; src: url('../chunkfive.eot'); }\n</style>}
+      )
+    end
   end
 end

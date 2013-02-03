@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'ChunkFive';
+  src: url('../chunkfive.eot');
+}
+
+.chunkfive {
+  font-family: 'ChunkFive';
+}
