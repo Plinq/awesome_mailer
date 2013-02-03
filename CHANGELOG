@@ -1,3 +1,7 @@
+0.1.0
+  * Full test coverage and moved to Nokogiri from Hpricot. Also
+    added autoload so the gem is there when you need it but won't
+    bog down your app startup anymore. Yay!
 0.0.3
   * Added Sprockets-based loading for local files. Now your mailers
     work with local assets written with something other than CSS!

@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "awesomemailer"
-  s.version = "0.0.3"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Flip Sasser"]
-  s.date = "2012-12-27"
+  s.date = "2013-02-03"
   s.description = "\n      AwesomeMailer embeds your e-mail CSS inline, allowing you to write e-mail templates without worrying too much about stylesheets\n    "
   s.email = "flip@x451.com"
   s.extra_rdoc_files = [
@@ -19,18 +19,15 @@ Gem::Specification.new do |s|
     "CHANGELOG",
     "Gemfile",
     "Gemfile.lock",
+    "Guardfile",
     "README.md",
     "Rakefile",
     "VERSION",
     "awesomemailer.gemspec",
     "lib/awesome_mailer.rb",
     "lib/awesome_mailer/base.rb",
-    "lib/awesomemailer.rb",
-    "spec/lib/awesome_mailer_spec.rb",
-    "spec/spec.opts",
-    "spec/spec_helper.rb",
-    "spec/support/test_mailer/test_email.html.erb",
-    "spec/support/test_mailer/test_email.text.erb"
+    "lib/awesome_mailer/renderer.rb",
+    "lib/awesomemailer.rb"
   ]
   s.homepage = "http://github.com/Plinq/awesome_mailer"
   s.require_paths = ["lib"]
@@ -42,17 +39,20 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<actionmailer>, [">= 3.2"])
+      s.add_runtime_dependency(%q<addressable>, [">= 0"])
       s.add_runtime_dependency(%q<css_parser>, [">= 1.2.5"])
-      s.add_runtime_dependency(%q<hpricot>, [">= 0.8"])
+      s.add_runtime_dependency(%q<nokogiri>, [">= 1.5.6"])
     else
       s.add_dependency(%q<actionmailer>, [">= 3.2"])
+      s.add_dependency(%q<addressable>, [">= 0"])
       s.add_dependency(%q<css_parser>, [">= 1.2.5"])
-      s.add_dependency(%q<hpricot>, [">= 0.8"])
+      s.add_dependency(%q<nokogiri>, [">= 1.5.6"])
     end
   else
     s.add_dependency(%q<actionmailer>, [">= 3.2"])
+    s.add_dependency(%q<addressable>, [">= 0"])
     s.add_dependency(%q<css_parser>, [">= 1.2.5"])
-    s.add_dependency(%q<hpricot>, [">= 0.8"])
+    s.add_dependency(%q<nokogiri>, [">= 1.5.6"])
   end
 end
 
