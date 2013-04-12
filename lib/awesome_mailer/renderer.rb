@@ -60,6 +60,13 @@ module AwesomeMailer
       end
     end
 
+    def asset_host
+      rails? && (
+        Rails.configuration.action_mailer.try(:asset_host) ||
+        Rails.configuration.action_controller.try(:asset_host)
+      )
+    end
+
     def asset_pipeline_path
       return false unless sprockets?
       /^#{Regexp.escape(Rails.configuration.assets[:prefix])}\//
@@ -67,6 +74,12 @@ module AwesomeMailer
 
     def css_parser
       @css_parser ||= CssParser::Parser.new
+    end
+
+    def default_host
+      if host = AwesomeMailer::Base.default_url_options[:host]
+        "#{AwesomeMailer::Base.default_url_options[:scheme] || 'http'}://#{host}"
+      end
     end
 
     def head
@@ -84,10 +97,7 @@ module AwesomeMailer
     end
 
     def host
-      if host = AwesomeMailer::Base.default_url_options[:host] || rails? && (
-        Rails.configuration.action_controller.try(:asset_host) ||
-        Rails.configuration.action_mailer.try(:asset_host)
-      )
+      if host = asset_host || default_host
         Addressable::URI.heuristic_parse(host, scheme: 'http')
       end
     end
