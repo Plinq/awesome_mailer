@@ -1,7 +1,5 @@
 require 'abstract_controller'
 require 'action_mailer'
-require 'nokogiri'
-require 'css_parser'
 
 module AwesomeMailer
   class Base < ActionMailer::Base

@@ -1,3 +1,6 @@
+require 'css_parser'
+require 'nokogiri'
+
 module AwesomeMailer
   class Renderer
     attr_accessor :document
@@ -49,7 +52,6 @@ module AwesomeMailer
                 declarations -= vendor_specific_declarations
                 append_styles_to_head!(document, selector, vendor_specific_declarations, media_query)
               end
-
               # Include regular styles inline
                append_styles_to_body!(document, selector, declarations)
             end
@@ -82,7 +84,10 @@ module AwesomeMailer
     end
 
     def host
-      if host = AwesomeMailer::Base.default_url_options[:host]
+      if host = AwesomeMailer::Base.default_url_options[:host] || rails? && (
+        Rails.configuration.action_controller.try(:asset_host) ||
+        Rails.configuration.action_mailer.try(:asset_host)
+      )
         Addressable::URI.heuristic_parse(host, scheme: 'http')
       end
     end

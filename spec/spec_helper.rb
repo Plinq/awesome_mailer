@@ -68,4 +68,10 @@ end
 
 RSpec.configure do |config|
   config.include AwesomeMailerTestHelper
+
+  config.before do
+    Rails.stub(:configuration) do
+      AwesomeMailerTestHelper::AwesomeStruct.new
+    end
+  end
 end
