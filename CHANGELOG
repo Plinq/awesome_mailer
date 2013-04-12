@@ -1,3 +1,9 @@
+0.1.2
+  * Added support for @media queries and vendor prefixes
+    in the header. Should solve most issues w/CSS3 in
+    emails. Obviously it won't fix Outlook. Nothing can fix
+    Outlook.
+
 0.1.0
   * Full test coverage and moved to Nokogiri from Hpricot. Also
     added autoload so the gem is there when you need it but won't
