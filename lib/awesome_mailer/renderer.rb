@@ -17,21 +17,42 @@ module AwesomeMailer
     end
 
     private
-    def append_styles!(document, selector, declarations)
-      header_stylesheet.inner_html += "#{selector} { #{declarations} }\n"
+    def append_styles_to_body!(document, selector, declarations)
+      declarations = "#{declarations.join('; ')};"
+      document.search(selector).each do |element|
+        element['style'] = [element['style'], declarations].compact.join(';')
+      end
+    end
+
+    def append_styles_to_head!(document, selector, declarations, media = nil)
+      selector_and_declarations = "#{selector} { #{declarations.join('; ')}; }"
+      if media != :all
+        selector_and_declarations = "@media #{media} { #{selector_and_declarations} }"
+      end
+      header_stylesheet.inner_html += "#{selector_and_declarations}\n"
     end
 
     def apply_css!(document)
-      css_parser.each_selector do |selector, declarations, specificity|
-        # Rewrite relative URLs to match their parent CSS's URL path
-        rewrite_relative_urls(declarations) if css_host
-        if selector =~ /(^@|:)/
-          # Include difficult styles in the head
-          append_styles!(document, selector, declarations.to_s)
-        else
-          # Include regular styles inline
-          document.search(selector).each do |element|
-            element['style'] = [element['style'], *declarations].compact.join(';')
+      css_parser.rules_by_media_query.each do |media_query, rules|
+        rules.each do |rule|
+          rule.each_selector do |selector, declarations, specificity|
+            # Rewrite relative URLs to match their parent CSS's URL path
+            rewrite_relative_urls(declarations) if host
+            declarations = declarations.split(';').map(&:strip)
+            if media_query != :all || selector =~ /(^@|:|moz)/
+              # Include difficult styles in the head
+              append_styles_to_head!(document, selector, declarations, media_query)
+            else
+              # Strip vendor prefix styles and append them to the header
+              vendor_specific_declarations = declarations.select {|declaration| declaration =~ /^-/ }
+              if vendor_specific_declarations.any?
+                declarations -= vendor_specific_declarations
+                append_styles_to_head!(document, selector, vendor_specific_declarations, media_query)
+              end
+
+              # Include regular styles inline
+               append_styles_to_body!(document, selector, declarations)
+            end
           end
         end
       end
@@ -39,13 +60,7 @@ module AwesomeMailer
 
     def asset_pipeline_path
       return false unless sprockets?
-      /^#{Regexp.escape(Rails.configuration.assets.prefix)}\//
-    end
-
-    def css_host
-      if host = AwesomeMailer::Base.default_url_options[:host]
-        Addressable::URI.heuristic_parse(host, scheme: 'http')
-      end
+      /^#{Regexp.escape(Rails.configuration.assets[:prefix])}\//
     end
 
     def css_parser
@@ -66,13 +81,19 @@ module AwesomeMailer
       end
     end
 
+    def host
+      if host = AwesomeMailer::Base.default_url_options[:host]
+        Addressable::URI.heuristic_parse(host, scheme: 'http')
+      end
+    end
+
     def load_stylesheet(stylesheet)
       stylesheet_path = stylesheet['href'].split('?').shift
-      stylesheet_path.gsub!(/^#{Regexp.escape(css_host)}/, '') if css_host
+      stylesheet_path.gsub!(/^#{Regexp.escape(host)}/, '') if host
       case stylesheet_path
       when asset_pipeline_path
         if asset = read_asset_pipeline_asset(stylesheet_path)
-          css_parser.add_block!(asset.to_s, :media_types => :all)
+          css_parser.add_block!(asset.to_s)
         end
       when /^\//
         local_path = rails? && Rails.root.join('public', stylesheet_path.gsub(/^\//, '')).to_s
@@ -96,7 +117,7 @@ module AwesomeMailer
     def rewrite_relative_urls(css_declarations)
       css_declarations.scan(/(url\s*\(?["']+(.[^'"]*)["']\))/i).each do |url_command, item|
         next if item =~ /^http(s){0,1}:\/\//
-        item_url = css_host.dup
+        item_url = host.dup
         item_url.path = File.join(item_url.path, item)
         new_url_command = url_command.gsub(item, item_url.to_s)
         css_declarations[url_command] = new_url_command

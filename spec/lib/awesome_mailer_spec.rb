@@ -84,4 +84,20 @@ describe AwesomeMailer::Base do
       )
     end
   end
+
+  #it "embeds @media queries in the head tag" do
+    #email = TestMailer.render_template(:media_queries).body.to_s
+    #email.should == wrap_in_html(
+      #%{<p>Body text</p>},
+      #%{<style type=\"text/css\">\n@media only screen and (min-width: 600px) { body { background-color: #f00; } }\n@media only screen and (min-width: 320px) { body { background-color: #00f; } }\n</style>}
+    #)
+  #end
+
+  it "moves browser-specific properties into the head stylesheet" do
+    email = TestMailer.render_template(:vendor_prefixes).body.to_s
+    email.should == wrap_in_html(
+      %{<p style="border: 1px solid #f00; border-radius: 5px; padding: 1em;">Body text</p>},
+      %{<style type=\"text/css\">\np { -ms-border-radius: 5px; -o-border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; }\n</style>}
+    )
+  end
 end

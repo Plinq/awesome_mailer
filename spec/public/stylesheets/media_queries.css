@@ -1,0 +1,7 @@
+@media only screen and (min-width: 600px) {
+  body { background-color: #f00; }
+}
+
+@media only screen and (min-width: 320px) {
+  body { background-color: #00f; }
+}

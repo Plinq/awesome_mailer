@@ -2,6 +2,7 @@ require 'simplecov'
 SimpleCov.start
 require 'ostruct'
 require 'awesome_mailer'
+require 'pry'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
@@ -26,11 +27,27 @@ class TestMailer < AwesomeMailer::Base
 end
 
 module AwesomeMailerTestHelper
+  class AwesomeStruct < OpenStruct
+    def [](key)
+      send(key)
+    end
+
+    def []=(key, value)
+      send("#{key}=", value)
+    end
+  end
+
   def load_asset_pipeline
-    asset_pipeline = {"test.css" => File.read(File.join('spec', 'assets', 'stylesheets', 'test.css'))}
-    assets = {path: '/stylesheets'}
-    Rails.stub(:application) { OpenStruct.new(assets: asset_pipeline) }
-    Rails.stub(:configuration) { OpenStruct.new(assets: assets) }
+    asset_pipeline = AwesomeStruct.new(
+      "test.css" => File.read(File.join('spec', 'assets', 'stylesheets', 'test.css'))
+    )
+    assets = AwesomeStruct.new(prefix: '/stylesheets')
+    action_mailer = AwesomeStruct.new(asset_host: nil)
+    action_controller = AwesomeStruct.new(asset_host: nil)
+    Rails.stub(:application) { AwesomeStruct.new(assets: asset_pipeline) }
+    Rails.stub(:configuration) do
+      AwesomeStruct.new(assets: assets, action_mailer: action_mailer, action_controller: action_controller)
+    end
   end
 
   def wrap_in_html(string, head = "")
