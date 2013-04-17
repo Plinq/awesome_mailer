@@ -12,6 +12,11 @@ module AwesomeMailer
         # Must be intended for digital screens!
         load_stylesheet(stylesheet) if stylesheet['media'] =~ /^(all|handheld|screen)$/
       end
+      inline_stylesheets = document.search('style')
+      inline_stylesheets.each do |styles|
+        css_parser.add_block!(styles.inner_html)
+        styles.remove
+      end
       apply_css!(document)
     end
 

@@ -100,4 +100,11 @@ describe AwesomeMailer::Base do
       %{<style type=\"text/css\">\np { -ms-border-radius: 5px; -o-border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; }\n</style>}
     )
   end
+
+  context "when styles are embedded in the template" do
+    it "should include in parsed email" do
+      email = TestMailer.render_template(:embedded_styles).body.to_s
+      email.should == wrap_in_html('<div style="border: 1px solid #f00;">welcome!</div>')
+    end
+  end
 end
