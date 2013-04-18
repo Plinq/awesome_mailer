@@ -74,7 +74,7 @@ module AwesomeMailer
 
     def asset_pipeline_path
       return false unless sprockets?
-      /^#{Regexp.escape(Rails.configuration.assets[:prefix])}\//
+      /^\/#{Regexp.escape(Rails.configuration.assets[:prefix])}\//
     end
 
     def css_parser
