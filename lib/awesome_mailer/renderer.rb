@@ -114,6 +114,8 @@ module AwesomeMailer
       when asset_pipeline_path
         if asset = read_asset_pipeline_asset(stylesheet_path)
           css_parser.add_block!(asset.to_s)
+        else
+          Rails.logger.error 'AwesomeMailer error. Could not find: ' + stylesheet_path if rails?
         end
       when /^\//
 
