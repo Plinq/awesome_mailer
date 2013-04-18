@@ -112,18 +112,15 @@ module AwesomeMailer
       stylesheet_path.gsub!(/^#{Regexp.escape(host)}/, '') if host
       case stylesheet_path
       when asset_pipeline_path
-        Rails.logger.error 'In asset pipeline: ' + stylesheet_path
         if asset = read_asset_pipeline_asset(stylesheet_path)
           css_parser.add_block!(asset.to_s)
         end
       when /^\//
 
         local_path = rails? && Rails.root.join('public', stylesheet_path.gsub(/^\//, '')).to_s
-        Rails.logger.error 'in local path: ' + local_path
         css_parser.load_file!(local_path) if local_path && File.file?(local_path)
       else
         dirname = File.dirname(stylesheet['href'])
-        Rails.logger.error 'in else path: ' + dirname
         css_parser.load_uri!(stylesheet['href'], base_uri: dirname)
       end
       stylesheet.remove
@@ -134,8 +131,12 @@ module AwesomeMailer
     end
 
     def read_asset_pipeline_asset(path)
-      path = path.gsub(asset_pipeline_path, '')
+      path = path.gsub(asset_pipeline_path, '').gsub(digest_string, '')
       Rails.application.assets[path]
+    end
+
+    def digest_string
+      /-[A-Fa-f0-9]{32}/
     end
 
     def rewrite_relative_urls(css_declarations)
