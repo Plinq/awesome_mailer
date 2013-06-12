@@ -12,6 +12,11 @@ module AwesomeMailer
         # Must be intended for digital screens!
         load_stylesheet(stylesheet) if stylesheet['media'] =~ /^(all|handheld|screen)$/
       end
+      inline_stylesheets = document.search('style')
+      inline_stylesheets.each do |styles|
+        css_parser.add_block!(styles.inner_html)
+        styles.remove
+      end
       apply_css!(document)
     end
 
@@ -69,7 +74,7 @@ module AwesomeMailer
 
     def asset_pipeline_path
       return false unless sprockets?
-      /^#{Regexp.escape(Rails.configuration.assets[:prefix])}\//
+      /^\/#{Regexp.escape(Rails.configuration.assets[:prefix])}\//
     end
 
     def css_parser
@@ -109,8 +114,11 @@ module AwesomeMailer
       when asset_pipeline_path
         if asset = read_asset_pipeline_asset(stylesheet_path)
           css_parser.add_block!(asset.to_s)
+        else
+          Rails.logger.error 'AwesomeMailer error. Could not find: ' + stylesheet_path if rails?
         end
       when /^\//
+
         local_path = rails? && Rails.root.join('public', stylesheet_path.gsub(/^\//, '')).to_s
         css_parser.load_file!(local_path) if local_path && File.file?(local_path)
       else
@@ -125,8 +133,12 @@ module AwesomeMailer
     end
 
     def read_asset_pipeline_asset(path)
-      path = path.gsub(asset_pipeline_path, '')
+      path = path.gsub(asset_pipeline_path, '').gsub(digest_string, '')
       Rails.application.assets[path]
+    end
+
+    def digest_string
+      /-[A-Fa-f0-9]{32}/
     end
 
     def rewrite_relative_urls(css_declarations)
