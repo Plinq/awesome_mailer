@@ -9,7 +9,7 @@ begin
     gem.email = "flip@x451.com"
     gem.homepage = "http://github.com/Plinq/awesome_mailer"
     gem.authors = ["Flip Sasser"]
-    gem.files.exclude '.rspec', '.rvmrc', 'spec/**/*'
+    gem.files.exclude '.rspec', '.rvmrc', 'Gemfil*', 'Guardfile', 'Rakefile', 'spec/**/*'
   end
 rescue LoadError
 end

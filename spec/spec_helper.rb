@@ -37,6 +37,10 @@ module AwesomeMailerTestHelper
     end
   end
 
+  def file_root
+    File.expand_path('public', File.dirname(__FILE__))
+  end
+
   def load_asset_pipeline
     asset_pipeline = AwesomeStruct.new(
       "test.css" => File.read(File.join('spec', 'assets', 'stylesheets', 'test.css'))
@@ -50,9 +54,19 @@ module AwesomeMailerTestHelper
     end
   end
 
-  def wrap_in_html(string, head = "")
+  def load_file_server
+    server = Rack::Server.new(app: Rack::Directory.new(file_root), Port: "9876")
+    @file_server = fork { server.start }
+    sleep 2
+  end
+
+  def stop_file_server
+    `kill -9 #{@file_server}`
+  end
+
+  def wrap_in_html(string, head = "", body = "")
     html = [%{<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">}]
-    body = "<body>#{string}</body>"
+    body = "<body#{body}>#{string}</body>"
     if head
       html.push "<html>"
       html.push "<head>#{head}</head>"

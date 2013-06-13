@@ -17,7 +17,7 @@ module AwesomeMailer
         css_parser.add_block!(styles.inner_html)
         styles.remove
       end
-      apply_css!(document)
+      apply_css!
     end
 
     def to_html
@@ -25,41 +25,51 @@ module AwesomeMailer
     end
 
     private
-    def append_styles_to_body!(document, selector, declarations)
-      declarations = "#{declarations.join('; ')};"
-      document.search(selector).each do |element|
-        element['style'] = [element['style'], declarations].compact.join(';')
+    def apply_styles_to_body!(selector, properties)
+      rewrite_relative_urls(properties) if host
+      search_selector = selector =~ /^body/ ? selector : "body #{selector}"
+      document.search(search_selector).each do |element|
+        element['style'] = [element['style'], properties].flatten.compact.join('; ')
       end
     end
 
-    def append_styles_to_head!(document, selector, declarations, media = nil)
-      selector_and_declarations = "#{selector} { #{declarations.join('; ')}; }"
-      if media != :all
-        selector_and_declarations = "@media #{media} { #{selector_and_declarations} }"
-      end
-      header_stylesheet.inner_html += "#{selector_and_declarations}\n"
+    def apply_styles_to_head!(selector, properties, indent = 0)
+      rewrite_relative_urls(properties) if host
+      header_stylesheet.inner_html += "#{" " * indent}#{selector} { #{properties.join('; ')} }\n"
     end
 
-    def apply_css!(document)
+    def apply_css!
+      css_parser.compact!
+      applied_rules = []
+
+      # Apply @media queries to the document head
       css_parser.rules_by_media_query.each do |media_query, rules|
+        next if media_query == :all
+        header_stylesheet.inner_html += "@media #{media_query} {\n"
         rules.each do |rule|
-          rule.each_selector do |selector, declarations, specificity|
-            # Rewrite relative URLs to match their parent CSS's URL path
-            rewrite_relative_urls(declarations) if host
-            declarations = declarations.split(';').map(&:strip)
-            if media_query != :all || selector =~ /(^@|:|moz)/
-              # Include difficult styles in the head
-              append_styles_to_head!(document, selector, declarations, media_query)
-            else
-              # Strip vendor prefix styles and append them to the header
-              vendor_specific_declarations = declarations.select {|declaration| declaration =~ /^-/ }
-              if vendor_specific_declarations.any?
-                declarations -= vendor_specific_declarations
-                append_styles_to_head!(document, selector, vendor_specific_declarations, media_query)
-              end
-              # Include regular styles inline
-               append_styles_to_body!(document, selector, declarations)
-            end
+          rule.each_selector do |selector, properties, specificity|
+            properties = properties.split(';').map(&:strip)
+            apply_styles_to_head!(selector, properties, 2)
+          end
+        end
+        header_stylesheet.inner_html += "}\n"
+        applied_rules.push(*rules)
+      end
+
+      # Apply all other styles
+      css_parser.each_rule_set do |rule|
+        next if applied_rules.include? rule
+        rule.each_selector do |selector, properties, specificity|
+          properties = properties.split(';').map(&:strip)
+          if selector =~ /(^@|:(active|checked|disabled|enabled|focus|hover|lang|link|target|visited|:)|moz|webkit)/
+            # Special selectors get sent to the <head> tag
+            apply_styles_to_head!(selector, properties)
+          else
+            vendor_specific_properties = properties.select {|property| property =~ /^-/ }
+            # Special properties get sent to the <head> tag
+            apply_styles_to_head!(selector, vendor_specific_properties) unless vendor_specific_properties.empty?
+            # Everything else winds up inline on the body
+            apply_styles_to_body!(selector, properties - vendor_specific_properties)
           end
         end
       end
@@ -74,11 +84,12 @@ module AwesomeMailer
 
     def asset_pipeline_path
       return false unless sprockets?
-      /^\/#{Regexp.escape(Rails.configuration.assets[:prefix])}\//
+      path = File.join('', Rails.configuration.assets[:prefix], '').gsub('//', '/')
+      /^#{Regexp.escape(path)}/
     end
 
     def css_parser
-      @css_parser ||= CssParser::Parser.new
+      @css_parser ||= CssParser::Parser.new(absolute_paths: true)
     end
 
     def default_host
@@ -118,12 +129,11 @@ module AwesomeMailer
           Rails.logger.error 'AwesomeMailer error. Could not find: ' + stylesheet_path if rails?
         end
       when /^\//
-
         local_path = rails? && Rails.root.join('public', stylesheet_path.gsub(/^\//, '')).to_s
-        css_parser.load_file!(local_path) if local_path && File.file?(local_path)
+        css_parser.load_file!(local_path, nil, []) if local_path && File.file?(local_path)
       else
         dirname = File.dirname(stylesheet['href'])
-        css_parser.load_uri!(stylesheet['href'], base_uri: dirname)
+        css_parser.load_uri!(stylesheet['href'], base_uri: dirname, media_types: [])
       end
       stylesheet.remove
     end
@@ -133,21 +143,19 @@ module AwesomeMailer
     end
 
     def read_asset_pipeline_asset(path)
-      path = path.gsub(asset_pipeline_path, '').gsub(digest_string, '')
+      path = path.gsub(asset_pipeline_path, '').gsub(/-[A-Fa-f0-9]{32}/, '')
       Rails.application.assets[path]
     end
 
-    def digest_string
-      /-[A-Fa-f0-9]{32}/
-    end
-
-    def rewrite_relative_urls(css_declarations)
-      css_declarations.scan(/(url\s*\(?["']+(.[^'"]*)["']\))/i).each do |url_command, item|
-        next if item =~ /^http(s){0,1}:\/\//
-        item_url = host.dup
-        item_url.path = File.join(item_url.path, item)
-        new_url_command = url_command.gsub(item, item_url.to_s)
-        css_declarations[url_command] = new_url_command
+    def rewrite_relative_urls(properties)
+      properties.each do |property|
+        property.scan(/(url\s*\(?["']+(.[^'"]*)["']\))/i).each do |url_command, item|
+          next if item =~ /^http(s){0,1}:\/\//
+          item_url = host.dup
+          item_url.path = File.join(item_url.path, item)
+          new_url_command = url_command.gsub(item, item_url.to_s)
+          property[url_command] = new_url_command
+        end
       end
     end
 

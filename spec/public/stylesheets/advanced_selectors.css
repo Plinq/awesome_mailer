@@ -1,0 +1,50 @@
+*:empty { display:none; }
+
+body {
+  background-color: #0f0;
+}
+
+body[class] {
+  padding: 5px;
+}
+
+body > div {
+  font-size: 100%;
+}
+
+.neato {
+  margin: 1em;
+  padding: 10px
+}
+
+.neato p {
+  font-weight: normal;
+}
+
+.neato p:nth-child(2) {
+  border: 1px solid red;
+}
+
+#third {
+  display: inline-block;
+}
+
+p:last-of-type {
+  margin-bottom: 1em;
+}
+
+a:link { color: black; }
+a:active { top: 1px; }
+a:hover { text-decoration: underline; }
+a:visited { color: purple; }
+a:focus { outline: none; }
+a:target { background-color: white; }
+
+a[href="#"] { display: none; }
+p[lang="fr"] { border-color: yellow; }
+p[lang~="en"] { border-color: silver; }
+p[lang^="de"] { background-color: blue; }
+
+input:checked { vertical-align: middle; }
+
+p:lang(fr) { font-weight: bold; }
