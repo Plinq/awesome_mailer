@@ -134,6 +134,7 @@ a:focus { outline: none }
 a:target { background-color: white }
 input:checked { vertical-align: middle }
 p:lang(fr) { font-weight: bold }
+p:before { content: "PARAGRAPH COMIN UP" }
 </style>},
   %{ id="target" style="background-color: #0f0"})
   end

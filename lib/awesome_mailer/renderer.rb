@@ -34,6 +34,9 @@ module AwesomeMailer
       end
     rescue Nokogiri::CSS::SyntaxError # Complex CSS? Just dump it somewhere
       apply_styles_to_head!(selector, properties)
+    rescue RuntimeError => exception
+      raise $! unless exception.message =~ /xmlXPathCompOpEval/
+      apply_styles_to_head!(selector, properties)
     end
 
     def apply_styles_to_head!(selector, properties, indent = 0)

@@ -56,3 +56,5 @@ p[lang^="de"] { background-color: blue; }
 input:checked { vertical-align: middle; }
 
 p:lang(fr) { font-weight: bold; }
+
+p:before { content: "PARAGRAPH COMIN UP"; }
