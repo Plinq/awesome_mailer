@@ -26,11 +26,14 @@ module AwesomeMailer
 
     private
     def apply_styles_to_body!(selector, properties)
-      rewrite_relative_urls(properties) if host
       search_selector = selector =~ /^body/ ? selector : "body #{selector}"
-      document.search(search_selector).each do |element|
+      elements = document.search(search_selector)
+      rewrite_relative_urls(properties) if host
+      elements.each do |element|
         element['style'] = [element['style'], properties].flatten.compact.join('; ')
       end
+    rescue Nokogiri::CSS::SyntaxError # Complex CSS? Just dump it somewhere
+      apply_styles_to_head!(selector, properties)
     end
 
     def apply_styles_to_head!(selector, properties, indent = 0)

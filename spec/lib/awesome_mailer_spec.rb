@@ -110,11 +110,12 @@ describe AwesomeMailer::Base do
     email.should == wrap_in_html('<div style="border: 1px solid #f00">welcome!</div>')
   end
 
+  # TODO: SPLIT THIS UP IT'S AWFUL
   it "handles advanced selectors" do
     email = TestMailer.render_template(:advanced_selectors).body.to_s
     email.should == wrap_in_html(
       %{
-    <div class="neato" id="hey-hey" style="font-size: 100%; margin: 1em; padding: 10px">
+    <div class="neato neater" id="hey-hey" style="font-size: 100%; margin: 1em; padding: 10px; color: orange">
       <p lang="fr" style="font-weight: normal; border-color: yellow">First</p>
       <p lang="de en" class="bold" style="font-weight: normal; border: 1px solid red; border-color: silver; background-color: blue">Second</p>
       <p id="third" style="font-weight: normal; display: inline-block; margin-bottom: 1em">Third</p>
@@ -124,6 +125,7 @@ describe AwesomeMailer::Base do
     <div style="display: none; font-size: 100%"></div>
     <input checked name="do_thing" type="checkbox" value="1" style="display: none"> Do a thing?
   }, %{<style type="text/css">
+input:not([name=foo]):not(.baz) { font-size: 110% }
 a:link { color: black }
 a:active { top: 1px }
 a:hover { text-decoration: underline }

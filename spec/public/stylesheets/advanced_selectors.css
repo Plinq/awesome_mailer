@@ -17,6 +17,10 @@ body > div {
   padding: 10px
 }
 
+.neato.neater {
+  color: orange;
+}
+
 .neato p {
   font-weight: normal;
 }
@@ -27,6 +31,10 @@ body > div {
 
 #third {
   display: inline-block;
+}
+
+input:not([name=foo]):not(.baz) {
+  font-size: 110%;
 }
 
 p:last-of-type {
