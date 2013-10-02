@@ -9,6 +9,11 @@ describe AwesomeMailer::Base do
     email.should == wrap_in_html("<p>I have no doctype</p>", false)
   end
 
+  it "maintains doctypes if given" do
+    email = TestMailer.render_template(:doctype).body.to_s
+    email.should == "<!DOCTYPE html>\n<html><body><nav>I have a doctype</nav></body></html>\n"
+  end
+
   describe "when the asset pipeline is enabled" do
     before do
       load_asset_pipeline

@@ -41,7 +41,7 @@ module AwesomeMailer
 
     def apply_styles_to_head!(selector, properties, indent = 0)
       rewrite_relative_urls(properties) if host
-      header_stylesheet.inner_html += "#{" " * indent}#{selector} { #{properties.join('; ')} }\n"
+      header_stylesheet.content += "#{" " * indent}#{selector} { #{properties.join('; ')} }\n"
     end
 
     def apply_css!
@@ -51,14 +51,14 @@ module AwesomeMailer
       # Apply @media queries to the document head
       css_parser.rules_by_media_query.each do |media_query, rules|
         next if media_query == :all
-        header_stylesheet.inner_html += "@media #{media_query} {\n"
+        header_stylesheet.content += "@media #{media_query} {\n"
         rules.each do |rule|
           rule.each_selector do |selector, properties, specificity|
             properties = properties.split(';').map(&:strip)
             apply_styles_to_head!(selector, properties, 2)
           end
         end
-        header_stylesheet.inner_html += "}\n"
+        header_stylesheet.content += "}\n"
         applied_rules.push(*rules)
       end
 
@@ -113,7 +113,7 @@ module AwesomeMailer
     def header_stylesheet
       @header_stylesheet ||= head.at('style[@type="text/css"]') || Nokogiri::XML::Node.new('style', head).tap do |style|
         style['type'] = 'text/css'
-        style.inner_html = "\n"
+        style.content = "\n"
         head.add_child(style)
       end
     end
