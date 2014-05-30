@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'actionmailer', '>= 3.2'
+gem 'actionmailer', '>= 4.0'
 gem 'addressable'
 gem 'css_parser', '>= 1.2.5'
 gem 'nokogiri', '>= 1.5.6'
@@ -10,5 +10,6 @@ group :test do
   gem 'jeweler', require: false
   gem 'pry'
   gem 'rspec', require: false
+  gem 'capybara'
   gem 'simplecov', require: false
 end

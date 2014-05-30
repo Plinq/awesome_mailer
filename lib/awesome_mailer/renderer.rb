@@ -67,7 +67,7 @@ module AwesomeMailer
         next if applied_rules.include? rule
         rule.each_selector do |selector, properties, specificity|
           properties = properties.split(';').map(&:strip)
-          if selector =~ /(^@|:(active|checked|disabled|enabled|focus|hover|lang|link|target|visited|:)|moz|webkit)/
+          if selector =~ /(^@|:(active|checked|disabled|enabled|focus|hover|lang|link|target|visited|not|:)|moz|webkit)/
             # Special selectors get sent to the <head> tag
             apply_styles_to_head!(selector, properties)
           else

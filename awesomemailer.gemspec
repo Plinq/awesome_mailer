@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "awesomemailer"
-  s.version = "0.2.2"
+  s.version = "0.3.0"
 
   s.license = "MIT"
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -35,18 +35,18 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<actionmailer>, [">= 3.2"])
+      s.add_runtime_dependency(%q<actionmailer>, [">= 4.0"])
       s.add_runtime_dependency(%q<addressable>, [">= 0"])
       s.add_runtime_dependency(%q<css_parser>, [">= 1.2.5"])
       s.add_runtime_dependency(%q<nokogiri>, [">= 1.5.6"])
     else
-      s.add_dependency(%q<actionmailer>, [">= 3.2"])
+      s.add_dependency(%q<actionmailer>, [">= 4.0"])
       s.add_dependency(%q<addressable>, [">= 0"])
       s.add_dependency(%q<css_parser>, [">= 1.2.5"])
       s.add_dependency(%q<nokogiri>, [">= 1.5.6"])
     end
   else
-    s.add_dependency(%q<actionmailer>, [">= 3.2"])
+    s.add_dependency(%q<actionmailer>, [">= 4.0"])
     s.add_dependency(%q<addressable>, [">= 0"])
     s.add_dependency(%q<css_parser>, [">= 1.2.5"])
     s.add_dependency(%q<nokogiri>, [">= 1.5.6"])
