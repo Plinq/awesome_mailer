@@ -10,5 +10,6 @@ group :test do
   gem 'jeweler', require: false
   gem 'pry'
   gem 'rspec', require: false
+  gem 'capybara'
   gem 'simplecov', require: false
 end
