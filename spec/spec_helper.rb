@@ -65,21 +65,6 @@ module AwesomeMailerTestHelper
     `kill -9 #{@file_server}`
   end
 
-  def wrap_in_html(string, head = "", body = "")
-    html = [%{<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">}]
-    body = "\n<body#{body}>#{string}</body>\n"
-    if head
-      html.push "<html>"
-      html.push "<head>\n#{head}\n</head>"
-      html.push body
-      html.push "</html>"
-    else
-      html.push "<html>#{body}</html>"
-    end
-    html.push ""
-    html.join("\n").squish
-  end
-
   def render_email(template_name)
     email_body = TestMailer.render_template(template_name).body.to_s
     Capybara.string(email_body)
