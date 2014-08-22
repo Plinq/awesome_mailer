@@ -25,6 +25,7 @@ module AwesomeMailer
     end
 
     private
+
     def apply_styles_to_body!(selector, properties)
       search_selector = selector =~ /^body/ ? selector : "body #{selector}"
       elements = document.search(search_selector)
@@ -67,7 +68,7 @@ module AwesomeMailer
         next if applied_rules.include? rule
         rule.each_selector do |selector, properties, specificity|
           properties = properties.split(';').map(&:strip)
-          if selector =~ /(^@|:(active|checked|disabled|enabled|focus|hover|lang|link|target|visited|:)|moz|webkit)/
+          if selector =~ /(^@|:(active|checked|disabled|enabled|focus|hover|lang|link|not|target|visited|:)|moz|webkit)/
             # Special selectors get sent to the <head> tag
             apply_styles_to_head!(selector, properties)
           else
@@ -99,8 +100,16 @@ module AwesomeMailer
     end
 
     def default_host
-      if host = AwesomeMailer::Base.default_url_options[:host]
-        "#{AwesomeMailer::Base.default_url_options[:scheme] || 'http'}://#{host}"
+      if AwesomeMailer::Base.respond_to?(:default_url_options)
+        options = AwesomeMailer::Base.default_url_options
+      elsif defined?(Rails) && Rails.application && Rails.application.config
+        if Rails.application.config.action_mailer.respond_to?(:default_url_options)
+          options = Rails.application.config.action_mailer.default_url_options
+        end
+      end
+      options ||= {}
+      if host = options[:host]
+        "#{options[:scheme] || 'http'}://#{host}"
       end
     end
 

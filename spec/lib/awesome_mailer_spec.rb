@@ -6,12 +6,12 @@ describe AwesomeMailer::Base do
   end
 
   it "converts bad HTML to good HTML" do email = TestMailer.render_template(:no_doctype).body.to_s
-    email.should == wrap_in_html("<p>I have no doctype</p>", false)
+    clean(email).should == wrap_in_html("<p>I have no doctype</p>", false)
   end
 
   it "maintains doctypes if given" do
     email = TestMailer.render_template(:doctype).body.to_s
-    email.should == "<!DOCTYPE html>\n<html><body><nav>I have a doctype</nav></body></html>\n"
+    clean(email).should == "<!DOCTYPE html><html><body><nav>I have a doctype</nav></body></html>"
   end
 
   describe "when the asset pipeline is enabled" do
@@ -21,12 +21,12 @@ describe AwesomeMailer::Base do
 
     it "automatically parses the body of HTML e-mails" do
       email = TestMailer.render_template(:asset_pipeline).body.to_s
-      email.should == wrap_in_html('<div style="border: 1px solid #f00">welcome!</div>')
+      clean(email).should == wrap_in_html('<div style="border: 1px solid #f00">welcome!</div>')
     end
 
     it "automatically parses the body of multipart e-mails" do
       email = TestMailer.render_multipart_template(:asset_pipeline)
-      email.html_part.body.to_s.should == wrap_in_html('<div style="border: 1px solid #f00">welcome!</div>')
+      clean(email.html_part.body.to_s).should == wrap_in_html('<div style="border: 1px solid #f00">welcome!</div>')
       email.text_part.body.to_s.should == "welcome!\n"
     end
   end
@@ -38,7 +38,7 @@ describe AwesomeMailer::Base do
 
     it "rewrites URLS in a stylesheet to the default_url_options[:host]" do
       email = TestMailer.render_template(:url_rewriting).body.to_s
-      email.should == wrap_in_html(%{<div style='background-image: url("http://foo.bar/images/baz.jpg")'>welcome!</div>})
+      clean(email).should == wrap_in_html(%{<div style='background-image: url("http://foo.bar/images/baz.jpg")'>welcome!</div>})
     end
   end
 
@@ -53,14 +53,14 @@ describe AwesomeMailer::Base do
 
     it "loads the stylesheet from a URL" do
       email = TestMailer.render_template(:remote_stylesheet).body.to_s
-      email.should == wrap_in_html(%{<div style="background-image: url('http://localhost:9876/images/baz.jpg')">welcome!</div>})
+      clean(email).should == wrap_in_html(%{<div style="background-image: url('http://localhost:9876/images/baz.jpg')">welcome!</div>})
     end
   end
 
   describe "pseudo-states" do
     it "adds a style tag to the document head" do
       email = TestMailer.render_template(:pseudo_with_head).body.to_s
-      email.should == wrap_in_html(
+      clean(email).should == wrap_in_html(
         %{<p>I have a hover state in &lt;head&gt;</p>},
         %{<style type="text/css">\np:hover { background-color: #f00 }\n</style>}
       )
@@ -68,7 +68,7 @@ describe AwesomeMailer::Base do
 
     it "adds a head tag to the document fragment" do
       email = TestMailer.render_template(:pseudo_without_head).body.to_s
-      email.should == wrap_in_html(
+      clean(email).should == wrap_in_html(
         %{<p>I have a hover state in &lt;head&gt;</p>},
         %{<style type="text/css">\np:hover { background-color: #f00 }\n</style>}
       )
@@ -78,7 +78,7 @@ describe AwesomeMailer::Base do
   describe "@import and @font-face styles" do
     it "adds a style tag to the document head" do
       email = TestMailer.render_template(:font_face_with_head).body.to_s
-      email.should == wrap_in_html(
+      clean(email).should == wrap_in_html(
         %{<p class="chunkfive" style="font-family: 'ChunkFive'">I have a custom font</p>},
         %{<style type="text/css">\n@font-face { font-family: 'ChunkFive'; src: url('../chunkfive.eot') }\n</style>}
       )
@@ -86,7 +86,7 @@ describe AwesomeMailer::Base do
 
     it "adds a head tag to the document fragment" do
       email = TestMailer.render_template(:font_face_without_head).body.to_s
-      email.should == wrap_in_html(
+      clean(email).should == wrap_in_html(
         %{<p class="chunkfive" style="font-family: 'ChunkFive'">I have a custom font</p>},
         %{<style type="text/css">\n@font-face { font-family: 'ChunkFive'; src: url('../chunkfive.eot') }\n</style>}
       )
@@ -95,7 +95,7 @@ describe AwesomeMailer::Base do
 
   it "embeds @media queries in the head tag" do
     email = TestMailer.render_template(:media_queries).body.to_s
-    email.should == wrap_in_html(
+    clean(email).should == wrap_in_html(
       %{<p>Body text</p>},
       %{<style type=\"text/css\">\n@media only screen and (min-width: 600px) {\n  body { background-color: #f00 }\n}\n@media only screen and (min-width: 320px) {\n  body { background-color: #00f }\n}\n</style>},
       %{ style="background-color: #0f0"}
@@ -104,7 +104,7 @@ describe AwesomeMailer::Base do
 
   it "moves browser-specific properties into the head stylesheet" do
     email = TestMailer.render_template(:vendor_prefixes).body.to_s
-    email.should == wrap_in_html(
+    clean(email).should == wrap_in_html(
       %{<p style="border: 1px solid #f00; border-radius: 5px; padding: 1em">Body text</p>},
       %{<style type=\"text/css\">\np { -ms-border-radius: 5px; -o-border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px }\n</style>}
     )
@@ -112,13 +112,13 @@ describe AwesomeMailer::Base do
 
   it "moves <style> tags inline" do
     email = TestMailer.render_template(:embedded_styles).body.to_s
-    email.should == wrap_in_html('<div style="border: 1px solid #f00">welcome!</div>')
+    clean(email).should == wrap_in_html('<div style="border: 1px solid #f00">welcome!</div>')
   end
 
   # TODO: SPLIT THIS UP IT'S AWFUL
   it "handles advanced selectors" do
     email = TestMailer.render_template(:advanced_selectors).body.to_s
-    email.should == wrap_in_html(
+    clean(email).should == wrap_in_html(
       %{
     <div class="neato neater" id="hey-hey" style="font-size: 100%; margin: 1em; padding: 10px; color: orange">
       <p lang="fr" style="font-weight: normal; border-color: yellow">First</p>

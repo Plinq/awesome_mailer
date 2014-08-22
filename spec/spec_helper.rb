@@ -37,6 +37,10 @@ module AwesomeMailerTestHelper
     end
   end
 
+  def clean(string)
+    string.gsub(/\s*\n/, "").gsub(/\s{2,}/, '').strip
+  end
+
   def file_root
     File.expand_path('public', File.dirname(__FILE__))
   end
@@ -55,6 +59,7 @@ module AwesomeMailerTestHelper
   end
 
   def load_file_server
+    require 'rack'
     server = Rack::Server.new(app: Rack::Directory.new(file_root), Port: "9876")
     @file_server = fork { server.start }
     sleep 2
@@ -75,8 +80,7 @@ module AwesomeMailerTestHelper
     else
       html.push "<html>#{body}</html>"
     end
-    html.push ""
-    html.join("\n")
+    clean(html.join)
   end
 end
 
