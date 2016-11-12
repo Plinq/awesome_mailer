@@ -151,7 +151,7 @@ module AwesomeMailer
     def read_asset_pipeline_asset(path)
       path = path.gsub(asset_pipeline_path, '').gsub(/-[A-Fa-f0-9]{64}/, '')
       if Rails.application.assets.nil?
-        Rails.application.assets_manifest.assets[path]
+        Rails.application.assets_manifest.find_sources(path).first
       else
         Rails.application.assets[path]
       end
