@@ -150,7 +150,11 @@ module AwesomeMailer
 
     def read_asset_pipeline_asset(path)
       path = path.gsub(asset_pipeline_path, '').gsub(/-[A-Fa-f0-9]{64}/, '')
-      Rails.application.assets[path]
+      if Rails.application.assets.nil?
+        Rails.application.assets_manifest.assets[path]
+      else
+        Rails.application.assets[path]
+      end
     end
 
     def rewrite_relative_urls(properties)
