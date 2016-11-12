@@ -149,7 +149,7 @@ module AwesomeMailer
     end
 
     def read_asset_pipeline_asset(path)
-      path = path.gsub(asset_pipeline_path, '').gsub(/-[A-Fa-f0-9]{32}/, '')
+      path = path.gsub(asset_pipeline_path, '').gsub(/-[A-Fa-f0-9]{64}/, '')
       Rails.application.assets[path]
     end
 

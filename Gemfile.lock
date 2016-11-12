@@ -135,7 +135,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionmailer (~> 4.0.0)
+  actionmailer (>= 4.0)
   addressable
   capybara
   css_parser (>= 1.2.5)
@@ -145,3 +145,6 @@ DEPENDENCIES
   pry
   rspec
   simplecov
+
+BUNDLED WITH
+   1.13.6
