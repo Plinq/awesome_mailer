@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://github.com/Plinq/awesome_mailer"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.25"
   s.summary = "An ActionMailer extension that embeds CSS inline in e-mails"
 
   if s.respond_to? :specification_version then
@@ -38,18 +37,18 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<actionmailer>, [">= 4.0"])
       s.add_runtime_dependency(%q<addressable>, [">= 0"])
       s.add_runtime_dependency(%q<css_parser>, [">= 1.2.5"])
-      s.add_runtime_dependency(%q<nokogiri>, [">= 1.5.6"])
+      s.add_runtime_dependency(%q<nokogiri>, ["~> 1.8"])
     else
       s.add_dependency(%q<actionmailer>, [">= 4.0"])
       s.add_dependency(%q<addressable>, [">= 0"])
       s.add_dependency(%q<css_parser>, [">= 1.2.5"])
-      s.add_dependency(%q<nokogiri>, [">= 1.5.6"])
+      s.add_dependency(%q<nokogiri>, ["~> 1.8"])
     end
   else
     s.add_dependency(%q<actionmailer>, [">= 4.0"])
     s.add_dependency(%q<addressable>, [">= 0"])
     s.add_dependency(%q<css_parser>, [">= 1.2.5"])
-    s.add_dependency(%q<nokogiri>, [">= 1.5.6"])
+    s.add_dependency(%q<nokogiri>, ["~> 1.8"])
   end
 end
 
